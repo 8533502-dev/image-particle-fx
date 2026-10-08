@@ -110,7 +110,10 @@ function initLive() {
     function renderPalette(p) {
         $('palette').innerHTML = p.colors.slice(0, 6).map(c => `<i style="background:${c.hex}" title="${c.hex}"></i>`).join('') +
             `<i style="background:${p.accent};box-shadow:0 0 10px ${p.accent}" title="accent ${p.accent}"></i>`;
-        document.documentElement.style.setProperty('--accent', p.accent);
+        // UI accent follows the image, unless that color is too dark to read on the dark panels
+        const rgb = p.accent.match(/\w\w/g).map(h => parseInt(h, 16) / 255);
+        const lum = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+        document.documentElement.style.setProperty('--accent', lum > 0.35 ? p.accent : '#ffd9a8');
     }
 
     // ---------- tuning panel ----------
