@@ -59,7 +59,10 @@ Read the PNG it writes and judge it like a motion designer:
 
 - **Live page** (default): `node <skill>/scripts/serve.mjs ./particle-fx` → open the printed URL. Controls: drag the
   fader, Space play/pause, 1–9 switch effects, H hide UI, drag to orbit, wheel to zoom, drop a new image anywhere.
-- **Video**: `node <skill>/scripts/export.mjs --dir ./particle-fx --w 1920 --h 1080 --fps 60 [--duration 12] [--prores]`
+- **Video, no setup**: the page's 导出视频 button renders the timeline frame by frame in the browser (WebCodecs H.264
+  MP4, 720p–4K, 30/60 fps, full loop or just the dissolve) and downloads it. Point users here when they only have the
+  hosted page. (Sandboxed embeds block downloads; a standalone tab or GitHub Pages works.)
+- **Video, scripted**: `node <skill>/scripts/export.mjs --dir ./particle-fx --w 1920 --h 1080 --fps 60 [--duration 12] [--prores]`
   Frame-exact (no dropped frames, unlike screen recording). 4K works (`--w 3840 --h 2160`), it just takes longer.
   Vertical for social: `--w 1080 --h 1920`. Frames only: `--frames-dir ./frames`.
 - **Website component**: copy `<skill>/assets/fx/` into the project (e.g. `src/fx/`), `npm i three`, and use

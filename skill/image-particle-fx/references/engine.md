@@ -73,6 +73,10 @@ fx.setProgress(0.4);              // manual control (spring-smoothed); fx.play()
 fx.setEffect('ember-ascend', { look: { heatIntensity: 2 } });
 fx.setCamera({ preset: 'push' }); fx.setLook({ bloom: 0.6 }); fx.setTimeline({...});
 fx.on('frame', ({ time, progress }) => {}); fx.dispose();
+
+// in-browser export (WebCodecs + mp4-muxer, falls back to MediaRecorder WebM)
+import { exportVideo, dissolveRange } from './fx/index.js';
+const { blob } = await exportVideo(fx, { width: 1080, height: 1920, fps: 30, ...dissolveRange(fx.timeline), onProgress: f => {} });
 ```
 Bundlers: `npm i three`; the engine imports `three` and `three/examples/jsm/...`. transformers.js is loaded
 from the CDN at runtime (ignored by Vite/webpack); pass `depth: { mode: 'luminance' }` to skip AI depth entirely.

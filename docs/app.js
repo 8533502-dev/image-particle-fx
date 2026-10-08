@@ -1,5 +1,5 @@
 // Particle FX app shell: loads scene.json, wires the UI, and exposes window.FX for offline export.
-import { ParticleFX, EFFECTS, resolveEffect } from './fx/index.js';
+import { ParticleFX, EFFECTS, resolveEffect, exportVideo, dissolveRange, canEncodeMp4 } from './fx/index.js';
 
 const qs = new URLSearchParams(location.search);
 const EXPORT = qs.has('export');
@@ -179,9 +179,57 @@ function initLive() {
         a.download = 'scene.json'; a.click();
     });
 
+    // ---------- video export (in the browser) ----------
+    let recAbort = null;
+    const recEl = $('rec');
+    const recUpdateNote = () => {
+        const [w, h] = $('rec-size').value.split('x').map(Number), fps = +$('rec-fps').value;
+        const tl = fx.timeline, r = $('rec-range').value === 'dissolve' ? dissolveRange(tl) : { start: 0, duration: tl.duration };
+        const frames = Math.round(r.duration * fps);
+        $('rec-note').textContent = embedded
+            ? '当前页面嵌在其他网站里，浏览器不允许下载文件。请在独立页面中打开后再导出。'
+            : `${r.duration.toFixed(1)} 秒 · ${frames} 帧 · ${canEncodeMp4() ? 'MP4（H.264）逐帧渲染，不掉帧' : 'WebM 实时录制（这个浏览器不支持逐帧编码）'}`
+              + (w * h > 4e6 ? '。4K 渲染较慢，请耐心等待' : '');
+        return { w, h, fps, ...r };
+    };
+    ['rec-size', 'rec-fps', 'rec-range'].forEach(id => $(id).addEventListener('change', recUpdateNote));
+    $('rec-btn').addEventListener('click', () => {
+        recEl.hidden = false; $('rec-bar').hidden = true; $('rec-status').textContent = '';
+        $('rec-go').disabled = embedded; recUpdateNote();
+    });
+    $('rec-cancel').addEventListener('click', () => { if (recAbort) recAbort.abort(); else recEl.hidden = true; });
+    $('rec-go').addEventListener('click', async () => {
+        const cfg = recUpdateNote();
+        recAbort = new AbortController();
+        $('rec-go').disabled = true; $('rec-bar').hidden = false; $('rec-fill').style.width = '0%';
+        $('rec-cancel').textContent = '停止';
+        const t0 = performance.now();
+        try {
+            const { blob, ext } = await exportVideo(fx, {
+                width: cfg.w, height: cfg.h, fps: cfg.fps, start: cfg.start, duration: cfg.duration, signal: recAbort.signal,
+                onProgress: (f, label) => {
+                    $('rec-fill').style.width = (f * 100).toFixed(1) + '%';
+                    const el = (performance.now() - t0) / 1000, eta = f > 0.02 ? el / f - el : 0;
+                    $('rec-status').textContent = label + (eta > 1 ? ` · 约剩 ${Math.ceil(eta)} 秒` : '');
+                },
+            });
+            const name = `particle-fx_${scene.effect || 'fx'}_${cfg.w}x${cfg.h}_${cfg.fps}fps.${ext}`;
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 60000);
+            $('rec-status').textContent = `完成：${name}（${(blob.size / 1048576).toFixed(1)} MB）已开始下载`;
+        } catch (e) {
+            $('rec-status').textContent = e.name === 'AbortError' ? '已取消' : '导出失败：' + (e.message || e);
+        } finally {
+            recAbort = null; $('rec-go').disabled = false; $('rec-cancel').textContent = '关闭';
+            fx.play(); $('play').textContent = '❚❚';
+        }
+    });
+
     // ---------- keys ----------
     addEventListener('keydown', e => {
         if (e.target.tagName === 'INPUT' && e.target.type !== 'range') return;
+        if (!recEl.hidden) { if (e.key === 'Escape' && !recAbort) recEl.hidden = true; return; }
         if (e.key === 'h' || e.key === 'H') document.body.classList.toggle('hide-ui');
         else if (e.key === ' ') { e.preventDefault(); togglePlay(); }
         else if (/^[1-9]$/.test(e.key) && names[+e.key - 1]) chooseEffect(names[+e.key - 1]);

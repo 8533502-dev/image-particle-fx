@@ -488,6 +488,35 @@ export class ParticleFX {
 
     stop() { cancelAnimationFrame(this._raf); this._raf = null; }
 
+    /**
+     * Switch the drawing buffer to an exact export size (e.g. 1080x1920) without touching the on-screen layout.
+     * Pair with endExport(). Used by recorder.js; renderAt() then produces frames at that size.
+     */
+    beginExport(width, height) {
+        if (this._export) return;
+        this._export = { w: this.size.w, h: this.size.h, pr: this.size.pr, cam: { ...this.cameraOpts }, px: this.user.px, py: this.user.py };
+        this.user.px = this.user.py = this.user.tpx = this.user.tpy = 0;   // no mouse parallax in exports
+        this.renderer.setPixelRatio(1);
+        this.renderer.setSize(width, height, false);
+        this.composer.setPixelRatio(1);
+        this.composer.setSize(width, height);
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        this.drawMat?.uniforms.uRes.value.set(width, height);
+        this.gradePass.uniforms.uRes.value.set(width, height);
+        this.size = { w: width, h: height, pr: 1 };
+        if (this.cloud) this._autoDistance();            // re-fit the framing for the export aspect ratio
+        this.trailPass.reset(this.renderer);
+    }
+
+    endExport() {
+        const e = this._export; if (!e) return;
+        this._export = null;
+        this.cameraOpts = e.cam;
+        this.resize(e.w, e.h, e.pr);
+        this.trailPass.reset(this.renderer);
+    }
+
     dispose() {
         this.stop(); this._ro?.disconnect(); this._disposeGPU();
         this.composer.dispose?.(); this.renderer.dispose();

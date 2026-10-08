@@ -75,9 +75,22 @@ body.dragging #drop { display: flex; }
 @keyframes spin { to { transform: rotate(360deg); } }
 #palette { display: flex; gap: 4px; padding: 6px 8px; }
 #palette i { width: 14px; height: 14px; border-radius: 4px; display: block; }
+#rec { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; background: rgba(4, 5, 7, 0.55); }
+#rec[hidden] { display: none; }
+.rec-card { width: min(420px, calc(100% - 32px)); padding: 20px; }
+.rec-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+.rec-grid { display: grid; grid-template-columns: 52px 1fr; gap: 10px 12px; align-items: center; }
+.rec-grid label { color: var(--mute); font-size: 12px; }
+.rec-grid select { width: 100%; }
+.rec-note { color: var(--mute); font-size: 12px; margin-top: 12px; min-height: 1em; }
+.rec-bar { height: 6px; border-radius: 6px; background: rgba(255,255,255,.1); overflow: hidden; margin-top: 12px; }
+.rec-bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+.rec-status { font: 12px ui-monospace, monospace; color: var(--text); margin-top: 8px; min-height: 1em; }
+.rec-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+.btn:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (max-width: 760px) {
   #top { left: 12px; right: 12px; top: 12px; flex-wrap: wrap; gap: 6px; }
-  .brand { padding: 7px 10px; } .brand small, #palette, #save-btn, #status, #preset { display: none; }
+  .brand { padding: 7px 10px; } .brand small, #palette, #save-btn, #status, #preset, #tune-btn { display: none; }
   .btn, select { padding: 6px 9px; font-size: 12px; }
   #fx-list { top: auto; bottom: 122px; left: 12px; right: 12px; width: auto; display: flex; gap: 4px; overflow-x: auto; padding: 6px; }
   .fx-card { flex: 0 0 auto; padding: 7px 11px; white-space: nowrap; }
@@ -105,6 +118,7 @@ body.dragging #drop { display: flex; }
   <label class="btn" title="打开图片">打开图片<input id="file" type="file" accept="image/*" hidden></label>
   <button class="btn" id="tune-btn">调参</button>
   <button class="btn" id="save-btn" title="下载当前配置，用于离线导出视频">导出配置</button>
+  <button class="btn primary" id="rec-btn" title="把当前效果导出成视频">导出视频</button>
 </div>
 
 <div id="fx-list" class="glass ui"></div>
@@ -123,6 +137,33 @@ body.dragging #drop { display: flex; }
 </div>
 
 <div id="drop"><div>松开以生成粒子</div></div>
+
+<div id="rec" class="ui" hidden>
+  <div class="rec-card glass">
+    <h3>导出视频</h3>
+    <div class="rec-grid">
+      <label for="rec-size">尺寸</label>
+      <select id="rec-size">
+        <option value="1920x1080">横屏 1920×1080</option>
+        <option value="1080x1920">竖屏 1080×1920（抖音 / 小红书）</option>
+        <option value="1080x1080">方形 1080×1080</option>
+        <option value="3840x2160">4K 3840×2160（较慢）</option>
+        <option value="1280x720">720p 1280×720（最快）</option>
+      </select>
+      <label for="rec-fps">帧率</label>
+      <select id="rec-fps"><option value="30">30 fps</option><option value="60">60 fps（更顺滑，耗时翻倍）</option></select>
+      <label for="rec-range">范围</label>
+      <select id="rec-range"><option value="loop">完整循环（消散 → 重组）</option><option value="dissolve">只要消散段</option></select>
+    </div>
+    <p class="rec-note" id="rec-note"></p>
+    <div class="rec-bar" id="rec-bar" hidden><i id="rec-fill"></i></div>
+    <p class="rec-status" id="rec-status"></p>
+    <div class="rec-actions">
+      <button class="btn" id="rec-cancel">取消</button>
+      <button class="btn primary" id="rec-go">开始导出</button>
+    </div>
+  </div>
+</div>
 
 <script type="module" src="./app.js"></script>
 </body>
