@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Particle FX</title>
+<script type="importmap">
+{ "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<style>
+:root {
+  --bg: #040507; --panel: rgba(14, 15, 19, 0.62); --line: rgba(255, 255, 255, 0.08); --line2: rgba(255, 255, 255, 0.16);
+  --text: #eceae6; --mute: rgba(236, 234, 230, 0.5); --accent: #ffd9a8;
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--text); overflow: hidden;
+  font: 13px/1.4 "SF Pro Text", "PingFang SC", "Helvetica Neue", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+#stage { position: fixed; inset: 0; }
+#stage canvas { width: 100%; height: 100%; touch-action: none; cursor: grab; }
+#stage canvas:active { cursor: grabbing; }
+.ui { transition: opacity .5s ease, transform .5s ease; }
+body.hide-ui .ui { opacity: 0 !important; pointer-events: none !important; }
+body.export .ui, body.export #loader, body.export #drop { display: none !important; }
+.glass { background: var(--panel); border: 1px solid var(--line); backdrop-filter: blur(18px) saturate(1.2); -webkit-backdrop-filter: blur(18px) saturate(1.2); border-radius: 14px; }
+
+#top { position: fixed; top: 18px; left: 18px; right: 18px; display: flex; gap: 10px; align-items: center; pointer-events: none; }
+#top > * { pointer-events: auto; }
+.brand { padding: 9px 14px; font-weight: 600; letter-spacing: .02em; }
+.brand small { color: var(--mute); font-weight: 400; margin-left: 6px; }
+.btn { appearance: none; border: 1px solid var(--line2); background: rgba(255,255,255,.04); color: var(--text); border-radius: 10px;
+  padding: 8px 12px; font: inherit; cursor: pointer; transition: background .2s, border-color .2s; white-space: nowrap; }
+.btn:hover { background: rgba(255,255,255,.1); }
+.btn.primary { background: var(--accent); color: #111; border-color: transparent; font-weight: 600; }
+.spacer { flex: 1; }
+#status { color: var(--mute); padding: 0 6px; }
+
+#fx-list { position: fixed; left: 18px; top: 74px; bottom: 132px; width: 232px; padding: 8px; overflow-y: auto; }
+#fx-list::-webkit-scrollbar { width: 0; }
+.fx-card { padding: 10px 12px; border-radius: 10px; cursor: pointer; border: 1px solid transparent; transition: background .2s, border-color .2s; }
+.fx-card:hover { background: rgba(255,255,255,.05); }
+.fx-card.on { background: rgba(255,255,255,.08); border-color: var(--line2); }
+.fx-card b { font-weight: 600; } .fx-card i { font-style: normal; color: var(--mute); margin-left: 6px; font-size: 11px; }
+.fx-card p { color: var(--mute); font-size: 11.5px; margin-top: 3px; display: none; }
+.fx-card.on p { display: block; }
+.fx-card kbd { float: right; color: var(--mute); font: 10px ui-monospace, monospace; opacity: .7; }
+
+#tune { position: fixed; right: 18px; top: 74px; width: 260px; padding: 14px; max-height: calc(100% - 210px); overflow-y: auto; display: none; }
+#tune.open { display: block; }
+#tune h4 { font-size: 11px; color: var(--mute); font-weight: 500; letter-spacing: .08em; text-transform: uppercase; margin: 12px 0 6px; }
+#tune h4:first-child { margin-top: 0; }
+.row { display: grid; grid-template-columns: 1fr 44px; gap: 6px; align-items: center; margin: 6px 0; }
+.row label { color: var(--mute); font-size: 12px; grid-column: 1 / 3; display: flex; justify-content: space-between; }
+.row label span { color: var(--text); font-variant-numeric: tabular-nums; }
+input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 3px; border-radius: 3px; background: rgba(255,255,255,.14); outline: none; grid-column: 1 / 3; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(255,255,255,.08); cursor: pointer; }
+select { background: rgba(255,255,255,.05); color: var(--text); border: 1px solid var(--line2); border-radius: 10px; padding: 7px 10px; font: inherit; }
+
+#deck { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); width: min(720px, calc(100% - 36px)); padding: 14px 18px 16px; }
+#deck .head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+#deck .label { font-size: 11px; letter-spacing: .14em; color: var(--mute); text-transform: uppercase; }
+#deck .val { font: 12px ui-monospace, monospace; color: var(--accent); min-width: 44px; text-align: right; }
+#fader { height: 6px; background: linear-gradient(90deg, rgba(255,255,255,.22), rgba(255,255,255,.06)); }
+#fader::-webkit-slider-thumb { width: 46px; height: 18px; border-radius: 6px; background: var(--accent); box-shadow: 0 0 22px var(--accent); }
+.marks { display: flex; justify-content: space-between; color: var(--mute); font-size: 11px; margin-top: 6px; }
+
+#drop { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(4,5,7,.7); z-index: 20; font-size: 18px; letter-spacing: .04em; }
+body.dragging #drop { display: flex; }
+#drop div { padding: 40px 60px; border: 1px dashed var(--line2); border-radius: 20px; }
+#loader { position: fixed; inset: 0; display: flex; flex-direction: column; gap: 14px; align-items: center; justify-content: center; pointer-events: none; transition: opacity .6s; }
+#loader.done { opacity: 0; }
+#loader .ring { width: 34px; height: 34px; border-radius: 50%; border: 2px solid rgba(255,255,255,.12); border-top-color: var(--accent); animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+#palette { display: flex; gap: 4px; padding: 6px 8px; }
+#palette i { width: 14px; height: 14px; border-radius: 4px; display: block; }
+@media (max-width: 760px) {
+  #top { left: 12px; right: 12px; top: 12px; flex-wrap: wrap; gap: 6px; }
+  .brand { padding: 7px 10px; } .brand small, #palette, #save-btn, #status, #preset { display: none; }
+  .btn, select { padding: 6px 9px; font-size: 12px; }
+  #fx-list { top: auto; bottom: 122px; left: 12px; right: 12px; width: auto; display: flex; gap: 4px; overflow-x: auto; padding: 6px; }
+  .fx-card { flex: 0 0 auto; padding: 7px 11px; white-space: nowrap; }
+  .fx-card i, .fx-card kbd, .fx-card p, .fx-card.on p { display: none; }
+  #tune { left: 12px; right: 12px; top: 64px; width: auto; max-height: calc(100% - 190px); }
+  #deck { bottom: 12px; padding: 10px 14px 12px; } .marks span:nth-child(2) { display: none; }
+}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="loader"><div class="ring"></div><div id="loader-text">准备中…</div></div>
+
+<div id="top" class="ui">
+  <div class="brand glass">Particle FX<small>拖入任意图片</small></div>
+  <div id="palette" class="glass" title="从图片提取的配色"></div>
+  <span id="status"></span>
+  <div class="spacer"></div>
+  <select id="preset" title="内置示例图（公有领域 / 原创）"></select>
+  <select id="cam" title="运镜">
+    <option value="drift">漂浮视差</option><option value="half-orbit">半环绕</option><option value="orbit">环绕</option>
+    <option value="push">缓推</option><option value="pull">缓拉</option><option value="crane">升降</option>
+    <option value="dolly-zoom">希区柯克</option><option value="handheld">手持</option><option value="static">固定</option>
+  </select>
+  <label class="btn" title="打开图片">打开图片<input id="file" type="file" accept="image/*" hidden></label>
+  <button class="btn" id="tune-btn">调参</button>
+  <button class="btn" id="save-btn" title="下载当前配置，用于离线导出视频">导出配置</button>
+</div>
+
+<div id="fx-list" class="glass ui"></div>
+
+<div id="tune" class="glass ui"></div>
+
+<div id="deck" class="glass ui">
+  <div class="head">
+    <button class="btn" id="play">❚❚</button>
+    <span class="label">Dissolve</span>
+    <div class="spacer"></div>
+    <span class="val" id="pval">0.000</span>
+  </div>
+  <input id="fader" type="range" min="0" max="1" step="0.0005" value="0">
+  <div class="marks"><span>完整</span><span>空格 播放/暂停 · H 隐藏界面 · 拖拽旋转 · 滚轮缩放</span><span>消散</span></div>
+</div>
+
+<div id="drop"><div>松开以生成粒子</div></div>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>

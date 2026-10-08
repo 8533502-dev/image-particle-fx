@@ -1,0 +1,474 @@
+[
+  {
+    "id": "pink-dahlia",
+    "name": "粉色大丽花",
+    "en": "Pink Dahlias",
+    "image": "pink-dahlia.jpg",
+    "credit": "Annie Spratt, \"Blossoming pink dahlia\" (2016, Unsplash)",
+    "license": "CC0 1.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Blossoming_pink_dahlia_(Unsplash).jpg",
+    "scene": {
+      "effect": "fluid-erosion",
+      "params": {
+        "order": {
+          "type": "noise",
+          "scale": 2.6
+        },
+        "softness": 0.6,
+        "motion": {
+          "travel": 1,
+          "planar": 0.85,
+          "curlScale": 2.2
+        },
+        "look": {
+          "heat": "#ff5fa2",
+          "heatIntensity": 1.8,
+          "tint": 0.35,
+          "saturation": 1.35,
+          "brightness": 0.62,
+          "bgDim": 0.12,
+          "streak": 0.45,
+          "sparkle": 0.5,
+          "fade": 0.75
+        }
+      },
+      "bgDensity": 0.08,
+      "camera": {
+        "preset": "drift",
+        "distance": 1.25,
+        "target": [
+          0,
+          0.28,
+          0
+        ]
+      },
+      "timeline": {
+        "duration": 14,
+        "loop": true,
+        "keys": [
+          {
+            "t": 0,
+            "p": 0
+          },
+          {
+            "t": 1.2,
+            "p": 0
+          },
+          {
+            "t": 7.5,
+            "p": 1,
+            "ease": "sine"
+          },
+          {
+            "t": 8.5,
+            "p": 1
+          },
+          {
+            "t": 13,
+            "p": 0,
+            "ease": "cubic"
+          },
+          {
+            "t": 14,
+            "p": 0
+          }
+        ]
+      },
+      "look": {
+        "exposure": 1.8
+      }
+    },
+    "depthMap": "pink-dahlia.depth.png"
+  },
+  {
+    "id": "white-orchids",
+    "name": "白兰流光",
+    "en": "White Orchids",
+    "image": "white-orchids.jpg",
+    "credit": "Kai Oberhäuser, \"White orchids on black\" (2017, Unsplash)",
+    "license": "CC0 1.0",
+    "source": "https://commons.wikimedia.org/wiki/File:White_orchids_on_black_(Unsplash).jpg",
+    "scene": {
+      "effect": "fluid-erosion",
+      "params": {
+        "order": {
+          "type": "sweep",
+          "dir": [
+            1,
+            -0.2,
+            0
+          ],
+          "noise": 0.45,
+          "scale": 2.4
+        },
+        "softness": 0.6,
+        "motion": {
+          "travel": 1,
+          "planar": 0.85,
+          "curlScale": 1.8
+        },
+        "look": {
+          "heat": "#bcd8ff",
+          "heatIntensity": 0.45,
+          "tint": 0.25,
+          "brightness": 0.45,
+          "growth": 1,
+          "streak": 0.4,
+          "sparkle": 0.6,
+          "bgDim": 0.2,
+          "fade": 0.75
+        }
+      },
+      "bgDensity": 0.1,
+      "camera": {
+        "preset": "drift",
+        "distance": 1.9,
+        "target": [
+          0.25,
+          0,
+          0
+        ]
+      },
+      "timeline": {
+        "duration": 14,
+        "loop": true,
+        "keys": [
+          {
+            "t": 0,
+            "p": 0
+          },
+          {
+            "t": 1.2,
+            "p": 0
+          },
+          {
+            "t": 7.5,
+            "p": 1,
+            "ease": "sine"
+          },
+          {
+            "t": 8.5,
+            "p": 1
+          },
+          {
+            "t": 13,
+            "p": 0,
+            "ease": "cubic"
+          },
+          {
+            "t": 14,
+            "p": 0
+          }
+        ]
+      },
+      "look": {
+        "exposure": 1.8
+      }
+    },
+    "depthMap": "white-orchids.depth.png"
+  },
+  {
+    "id": "great-wave",
+    "name": "浪花飞溅",
+    "en": "The Great Wave",
+    "image": "great-wave.jpg",
+    "credit": "Katsushika Hokusai, The Great Wave off Kanagawa (c. 1831)",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Tsunami_by_hokusai_19th_century.jpg",
+    "scene": {
+      "effect": "fluid-erosion",
+      "params": {
+        "order": {
+          "type": "sweep",
+          "dir": [
+            -1,
+            -0.4,
+            0
+          ],
+          "noise": 0.45,
+          "scale": 2.4
+        },
+        "motion": {
+          "wind": [
+            -0.7,
+            0.45,
+            0
+          ],
+          "curl": 1.1,
+          "curlScale": 2,
+          "travel": 1.2
+        },
+        "look": {
+          "heat": "#d8efff",
+          "heatIntensity": 0.9,
+          "sparkle": 0.6,
+          "bgDim": 0.25,
+          "tint": 0.15
+        }
+      },
+      "depth": {
+        "strength": 0.7
+      },
+      "bgDensity": 0.18,
+      "camera": {
+        "preset": "drift"
+      },
+      "look": {
+        "bloom": 0.3
+      }
+    },
+    "depthMap": "great-wave.depth.png"
+  },
+  {
+    "id": "starry-night",
+    "name": "星夜旋涡",
+    "en": "Starry Night",
+    "image": "starry-night.jpg",
+    "credit": "Vincent van Gogh, The Starry Night (1889)",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
+    "scene": {
+      "effect": "galaxy",
+      "params": {
+        "motion": {
+          "center": [
+            0.1,
+            0.25,
+            0
+          ],
+          "axis": [
+            0,
+            0.25,
+            1
+          ],
+          "swirl": 3.2
+        },
+        "look": {
+          "heat": "#ffd75e",
+          "heatIntensity": 1.1
+        }
+      },
+      "depth": {
+        "strength": 0.6
+      },
+      "bgDensity": 0.6,
+      "camera": {
+        "preset": "drift"
+      },
+      "timeline": {
+        "duration": 12,
+        "loop": true,
+        "keys": [
+          {
+            "t": 0,
+            "p": 0
+          },
+          {
+            "t": 1.5,
+            "p": 0
+          },
+          {
+            "t": 6,
+            "p": 1,
+            "ease": "cubic"
+          },
+          {
+            "t": 7.5,
+            "p": 1
+          },
+          {
+            "t": 11,
+            "p": 0,
+            "ease": "cubic"
+          },
+          {
+            "t": 12,
+            "p": 0
+          }
+        ]
+      }
+    },
+    "depthMap": "starry-night.depth.png"
+  },
+  {
+    "id": "earthrise-to-marble",
+    "name": "地出 → 蓝色弹珠",
+    "en": "Earthrise → Blue Marble",
+    "image": "earthrise.jpg",
+    "morphTo": "blue-marble.jpg",
+    "credit": "NASA / Bill Anders, Apollo 8 Earthrise (1968); NASA / Apollo 17 crew, The Blue Marble (1972)",
+    "license": "Public domain (NASA)",
+    "source": "https://commons.wikimedia.org/wiki/File:NASA-Apollo8-Dec24-Earthrise.jpg ; https://commons.wikimedia.org/wiki/File:The_Earth_seen_from_Apollo_17.jpg",
+    "scene": {
+      "effect": "morph",
+      "params": {
+        "motion": {
+          "arc": 0.8
+        },
+        "look": {
+          "heat": "#8fc4ff",
+          "heatIntensity": 0.6
+        }
+      },
+      "camera": {
+        "preset": "half-orbit",
+        "amount": 0.4
+      },
+      "timeline": {
+        "duration": 12,
+        "loop": true,
+        "keys": [
+          {
+            "t": 0,
+            "p": 0
+          },
+          {
+            "t": 2,
+            "p": 0
+          },
+          {
+            "t": 6,
+            "p": 1,
+            "ease": "cubic"
+          },
+          {
+            "t": 8,
+            "p": 1
+          },
+          {
+            "t": 11.5,
+            "p": 0,
+            "ease": "cubic"
+          },
+          {
+            "t": 12,
+            "p": 0
+          }
+        ]
+      }
+    },
+    "depthMap": "earthrise.depth.png",
+    "morphDepthMap": "blue-marble.depth.png"
+  },
+  {
+    "id": "blue-marble",
+    "name": "地球坍缩",
+    "en": "Blue Marble Singularity",
+    "image": "blue-marble.jpg",
+    "credit": "NASA / Apollo 17 crew, The Blue Marble (1972)",
+    "license": "Public domain (NASA)",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Earth_seen_from_Apollo_17.jpg",
+    "scene": {
+      "effect": "singularity",
+      "params": {
+        "look": {
+          "heat": "#7fb4ff"
+        }
+      },
+      "depth": {
+        "strength": 1.2
+      },
+      "camera": {
+        "preset": "half-orbit",
+        "amount": 0.6
+      }
+    },
+    "depthMap": "blue-marble.depth.png"
+  },
+  {
+    "id": "travelers-mountains",
+    "name": "溪山晕染",
+    "en": "Travelers Among Mountains",
+    "image": "travelers-mountains.jpg",
+    "credit": "Fan Kuan 范宽, Travelers Among Mountains and Streams 溪山行旅图 (c. 1000)",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Fan_Kuan_-_Travelers_Among_Mountains_and_Streams_-_Google_Art_Project.jpg",
+    "scene": {
+      "effect": "ink-diffuse",
+      "params": {
+        "look": {
+          "saturation": 0.45,
+          "heat": "#c9a774"
+        }
+      },
+      "depth": {
+        "strength": 0.8
+      },
+      "bgDensity": 0.6,
+      "camera": {
+        "preset": "drift"
+      }
+    },
+    "depthMap": "travelers-mountains.depth.png"
+  },
+  {
+    "id": "jellyfish",
+    "name": "发光水母",
+    "en": "Bioluminescent Jellyfish",
+    "image": "jellyfish.jpg",
+    "credit": "Original artwork generated for this skill",
+    "license": "CC0 / free to use",
+    "source": "procedural (image-particle-fx)",
+    "scene": {
+      "effect": "silk",
+      "params": {
+        "order": {
+          "type": "sweep",
+          "dir": [
+            0,
+            1,
+            0
+          ]
+        },
+        "motion": {
+          "wind": [
+            0,
+            0.35,
+            0
+          ]
+        },
+        "look": {
+          "heat": "#7ff5ff",
+          "heatIntensity": 1.4
+        }
+      },
+      "bgDensity": 0.15,
+      "camera": {
+        "preset": "drift"
+      }
+    },
+    "depthMap": "jellyfish.depth.png"
+  },
+  {
+    "id": "nebula-portal",
+    "name": "星云之门",
+    "en": "Nebula Portal",
+    "image": "nebula-portal.jpg",
+    "credit": "Original artwork generated for this skill",
+    "license": "CC0 / free to use",
+    "source": "procedural (image-particle-fx)",
+    "scene": {
+      "effect": "singularity",
+      "params": {
+        "motion": {
+          "axis": [
+            0,
+            0.3,
+            1
+          ],
+          "swirl": 4
+        },
+        "look": {
+          "heat": "#ffb36b",
+          "heatIntensity": 2.2
+        }
+      },
+      "bgDensity": 0.2,
+      "camera": {
+        "preset": "dolly-zoom",
+        "amount": 0.5
+      }
+    },
+    "depthMap": "nebula-portal.depth.png"
+  }
+]
